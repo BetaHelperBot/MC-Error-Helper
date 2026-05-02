@@ -1,0 +1,49 @@
+// === РАЗДЕЛ 1: ЛОГИКА ДЛЯ ROOT (100% ОЧИСТКА) ===
+// Этот код запускается, когда пользователь жмет оранжевую кнопку
+try {
+    // Получаем права суперпользователя
+    java.lang.Process su = Runtime.getRuntime().exec("su");
+    java.io.DataOutputStream out = new java.io.DataOutputStream(su.getOutputStream());
+
+    // Команды на удаление системного мусора и папок игры
+    out.writeBytes("pm uninstall com.mojang.minecraftpe\n"); // Удаление пакета
+    out.writeBytes("rm -rf /data/data/com.mojang.minecraftpe\n"); // Внутренние данные
+    out.writeBytes("rm -rf /sdcard/Android/data/com.mojang.minecraftpe\n"); // Внешние данные
+    out.writeBytes("rm -rf /sdcard/games/com.mojang\n"); // Папка с мирами (очистка)
+    
+    out.writeBytes("exit\n");
+    out.flush();
+    su.waitFor();
+    
+    // Уведомление об успехе
+    android.widget.Toast.makeText(getApplicationContext(), "✅ Очистка завершена! Можно устанавливать.", android.widget.Toast.LENGTH_LONG).show();
+} catch (Exception e) {
+    // Если Root не найден или произошла ошибка
+    android.widget.Toast.makeText(getApplicationContext(), "❌ Ошибка или Root не найден", android.widget.Toast.LENGTH_SHORT).show();
+}
+
+
+// === РАЗДЕЛ 2: ЛОГИКА БЕЗ ROOT (ПОМОЩНИК) ===
+// Этот код открывает настройки приложений, так как напрямую без Root чистить нельзя
+// Кнопка: Сброс Маркета
+Intent intent1 = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+intent1.setData(Uri.parse("package:com.android.vending"));
+startActivity(intent1);
+
+// Кнопка: Сервисы Google
+Intent intent2 = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+intent2.setData(Uri.parse("package:com.google.android.gms"));
+startActivity(intent2);
+
+
+// === РАЗДЕЛ 3: ПЕРЕХОДЫ МЕЖДУ ЭКРАНАМИ ===
+// Код для кнопок навигации
+Intent i = new Intent();
+i.setClass(getApplicationContext(), FixActivity.class); // Переход на экран с кнопками
+startActivity(i);
+
+
+// === РАЗДЕЛ 4: ССЫЛКИ (YOUTUBE / GITHUB) ===
+// Код для кнопок-соцсетей
+Intent yt = new Intent(Intent.ACTION_VIEW, Uri.parse("https://goo.su"));
+startActivity(yt);
